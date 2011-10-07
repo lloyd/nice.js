@@ -1,0 +1,119 @@
+<head>
+  <title>how to be nice.js</title>
+  <style>
+    #prog {
+      max-width: 600px;
+      width: 100%;
+      margin: 1em 10% 1em 10%;
+      border: 1px solid black;
+      height: 1em;
+    }
+
+    #progInner {
+      width: 10%;
+      margin: 0;
+      padding: 0;
+      background: blue;
+      height: 1em;
+    }
+  </style>
+</head>
+<body>
+<h1>how to be nice(.js)</h1>
+
+<p>
+  javascript is getting awesomer.  you can now do cpu intensive
+  shit <a href="https://github.com/mozilla/jwcrypto">like crypto</a>
+  in javascript.  a problem that arises by doing compute intensive
+  work is that you lock don't let the rest of your process (like, the
+  browser) have any of the processor to do stuff like render user
+  feedback.  Some
+  browsers <a href="http://www.nczonline.net/blog/2009/01/05/what-determines-that-a-script-is-long-running/">even
+  tell the user your code</a> is broke if you run off and compute
+  stuff for more than 5 or 10 seconds at a time.  "web workers" let you
+  run computationally expensive stuff in the background, but they aren't
+  <a href="http://caniuse.com/#search=worker">usable everywhere</a>
+
+</p>
+
+<p>
+  <i>nice.js</i> is a teensy tinsy micro framework that lets you adjust
+  instrument your code to be nicer, giving some processor time to the
+  rest of the browser.
+</p>
+
+<h1> try it </h1>
+
+<p>
+  Click this button to run *mean* code greedily computes something for 10s: <button onclick="beMean()">be mean</button>
+</p>
+
+<p>
+  Click this button to run *nice* code pleasantly computes something for 10s: <button onclick="beNice()">be nice</button>
+</p>
+
+<p>
+  Check out this lil' animation while the above are running.  It should be smooth when you're
+  being nice, and chunky monkey when you're being mean.
+</p>
+<div id="prog"><div id="progInner"></div></div>
+
+
+<h1> use it </h1>
+
+<p>
+  Be nice.  Get the code on github and look at the source of this page for how to use it
+</p>
+
+</body>
+<script src="stuff/prng4.js"></script>
+<script src="stuff/rng.js"></script>
+<script src="stuff/jsbn-optimized.js"></script>
+<script src="stuff/jsbn2-optimized.js"></script>
+<script src="nice.js"></script>
+<script>
+
+// run for about 10s
+MAX_RUNTIME_MS = 10000;
+
+var lastProgress = undefined;
+function setProgress(pct) {
+  if (lastProgress !== undefined && lastProgress === pct) return;
+  document.getElementById('progInner').style.width = pct + '%';
+  lastProgress = pct;
+}
+
+function beMean() {
+  var start = new Date();
+  var rng = new SecureRandom();
+  var bigints = [];
+  for (;;) {
+    bigints.push(new BigInteger(128, 1, rng));
+    var elapsed = new Date() - start;
+    setProgress(Math.round((elapsed % 1000) / 10));
+    if (elapsed > MAX_RUNTIME_MS) break;
+  }
+  console.log("being mean, i generated", bigints.length);
+}
+
+function beNice() {
+  var start = new Date();
+  var rng = new SecureRandom();
+  var bigints = [];
+  var nice = new Nice();
+  function one_iter() {
+    for(;;) {
+      bigints.push(new BigInteger(128, 1, rng));
+      var elapsed = new Date() - start;
+      setProgress(Math.round((elapsed % 1000) / 10));
+      if (elapsed > MAX_RUNTIME_MS) {
+        console.log("being nice, i generated", bigints.length);
+        return;
+      }
+      return nice.pause(one_iter);
+    }
+  }
+  one_iter();
+}
+
+</script>
