@@ -3,7 +3,7 @@
 nice.js is a tiny library that lets you give the javascript render thread
 some time to exectute when doing computationally expensive things.
 
-See demo.html for details
+See index.html for details
 
 ## 3rd party code
 
