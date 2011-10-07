@@ -5,6 +5,12 @@ some time to exectute when doing computationally expensive things.
 
 See demo.html for details
 
+## 3rd party code
+
+the stuff under `stuff/` is third party code, only included to let the
+demo run a realistic computational workload.  That stuff is not mine,
+and isn't required to use `nice.js`.
+
 ## LICENSE 
 
               DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
